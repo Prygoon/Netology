@@ -4,15 +4,19 @@ read -r -p "Введите имя файла: " filename
 
 case "$filename" in
 *.jpg | *.png | *.gif)
-    echo "image"
+	filetype="image"
     ;;
 *.mp3 | *.wav)
-    echo "audio"
+    filetype="audio"
     ;;
 *.txt | *.doc)
-    echo "text"
+    filetype="text"
     ;;
 *)
-    echo "unknown"
+    filetype="unknown"
     ;;
 esac
+
+echo "$filetype"
+exit 0
+
