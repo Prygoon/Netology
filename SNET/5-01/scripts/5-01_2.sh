@@ -18,3 +18,5 @@ else
 fi
 
 echo "$result"
+exit 0
+
