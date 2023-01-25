@@ -8,4 +8,3 @@ done
 
 echo "" # For new line after last number
 exit 0
-
