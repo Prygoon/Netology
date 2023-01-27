@@ -8,8 +8,7 @@ if [[ ! -d $filepath ]]; then
     mkdir "${filepath/#~/$HOME}" && echo "Директория $filepath создана"
 else
     echo "Такая директория уже существует" >&2
-	exit 1
+    exit 1
 fi;
 
 exit 0
-

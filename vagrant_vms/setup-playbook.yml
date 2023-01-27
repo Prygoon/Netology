@@ -1,13 +1,11 @@
+---
 - hosts: all
   vars:
     user: moiseev
     # created with:
     # python -c 'import crypt; print(crypt.crypt("<password>", "$1$tjerugy9$"))'
     password: $1$tjerugy9$5O391mjzV0GXpgVpIUECF1
-
   become: true
-
-
   tasks:
     - name: Update all packages in Debian-based machines
       become: true
@@ -17,7 +15,6 @@
         cache_valid_time: 86400
       when:
         - ansible_os_family == "Debian"
-
     - name: Install software (Debian-based OSes)
       ansible.builtin.apt:
         name: "{{ item }}"
@@ -31,24 +28,20 @@
         - neofetch
       when:
         - ansible_os_family == "Debian"
-
     - name: Update all packages in RPM-based machines
-
       become: true
       ansible.builtin.dnf:
-        name: '*'
+        name: "*"
         state: latest
         update_cache: true
         update_only: false
       when:
         - ansible_os_family == "RedHat"
-
     - name: Enable EPEL Repository
       ansible.builtin.dnf:
         name: epel-release
         state: present
       when: ansible_facts['os_family'] == 'RedHat'
-
     - name: Install software (RPM-based OSes)
       ansible.builtin.dnf:
         name: "{{ item }}"
@@ -61,12 +54,10 @@
         - nano
       when:
         - ansible_os_family == "RedHat"
-
     - name: Make sure we have a 'wheel' group
       ansible.builtin.group:
         name: wheel
         state: present
-
     - name: Create new user
       ansible.builtin.user:
         name: "{{ user }}"
@@ -76,15 +67,13 @@
         groups: wheel
         append: true
         shell: /bin/bash
-
     - name: Add 'wheel' group to sudoers
       ansible.builtin.lineinfile:
         dest: /etc/sudoers
         state: present
-        regexp: '^%wheel'
-        line: '%wheel ALL=(ALL) ALL'
-        validate: 'visudo -cf %s'
-
+        regexp: "^%wheel"
+        line: "%wheel ALL=(ALL) ALL"
+        validate: "visudo -cf %s"
     - name: Set authorized key for user took from file
       ansible.posix.authorized_key:
         user: "{{ user }}"
