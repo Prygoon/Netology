@@ -1,0 +1,44 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+nodes = [
+  {
+    name: "debian",
+    hostname: "vm1",
+    ip: "192.168.123.2",
+    memory: "1024",
+    cpu: "1",
+    boxname: "generic/debian11"
+  },
+  {
+    name: "alma",
+    hostname: "vm2",
+    ip: "192.168.123.3",
+    memory: "1024",
+    cpu: "1",
+    boxname: "almalinux/9"
+  }
+]
+
+Vagrant.configure("2") do |config|
+  nodes.each do |node|
+    config.vm.box_check_update = false
+    config.vm.define node[:hostname] do |nodeconfig|
+      nodeconfig.vm.box = node[:boxname]
+      nodeconfig.vm.hostname = node[:hostname]
+      nodeconfig.vm.network :private_network, ip: node[:ip], :adapter => 2
+      nodeconfig.vm.provider "virtualbox" do |v|
+        v.name = node[:name]
+        v.gui = false
+        v.memory = node[:memory]
+        v.cpus = node[:cpu]
+        v.linked_clone = false
+      end
+    end
+  end
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.verbose = "v"
+    ansible.playbook = "setup-playbook.yml"
+  end
+end
