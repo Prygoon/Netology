@@ -3,17 +3,17 @@
 
 nodes = [
   {
-    name: "vm1",
-    hostname: "vmdebian",
-    ip: "10.11.12.13",
+    name: "debian",
+    hostname: "vm1",
+    ip: "192.168.123.2",
     memory: "1024",
     cpu: "1",
     boxname: "generic/debian11"
   },
   {
-    name: "vm2",
-    hostname: "vmalma",
-    ip: "10.11.12.14",
+    name: "alma",
+    hostname: "vm2",
+    ip: "192.168.123.3",
     memory: "1024",
     cpu: "1",
     boxname: "almalinux/9"
@@ -23,17 +23,17 @@ nodes = [
 Vagrant.configure("2") do |config|
   nodes.each do |node|
     config.vm.box_check_update = false
+    config.vbguest.auto_update = false
     config.vm.define node[:hostname] do |nodeconfig|
       nodeconfig.vm.box = node[:boxname]
       nodeconfig.vm.hostname = node[:hostname]
-      nodeconfig.vm.network :private_network, ip: node[:ip], :adapter => 2
+      nodeconfig.vm.network :private_network, ip: node[:ip]
       nodeconfig.vm.provider "virtualbox" do |v|
         v.name = node[:name]
         v.gui = false
         v.memory = node[:memory]
         v.cpus = node[:cpu]
         v.linked_clone = false
-        v.check_guest_additions = true
       end
     end
   end
