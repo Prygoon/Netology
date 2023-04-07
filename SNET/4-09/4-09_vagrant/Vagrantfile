@@ -23,11 +23,10 @@ nodes = [
 Vagrant.configure("2") do |config|
   nodes.each do |node|
     config.vm.box_check_update = false
-    config.vbguest.auto_update = false
     config.vm.define node[:hostname] do |nodeconfig|
       nodeconfig.vm.box = node[:boxname]
       nodeconfig.vm.hostname = node[:hostname]
-      nodeconfig.vm.network :private_network, ip: node[:ip]
+      nodeconfig.vm.network :private_network, ip: node[:ip], :adapter => 2
       nodeconfig.vm.provider "virtualbox" do |v|
         v.name = node[:name]
         v.gui = false
