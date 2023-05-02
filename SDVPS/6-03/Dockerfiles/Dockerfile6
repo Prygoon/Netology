@@ -1,0 +1,13 @@
+# Указываем базовый образ Debian
+FROM debian:latest
+
+# Обновляем индекс пакетов и устанавливаем Apache
+RUN apt install -y tzdata && apt update && apt install -y apache2
+
+COPY ./index.html /var/www/html/index.html
+
+# Открываем порт 80 для входящих подключений
+EXPOSE 80
+
+# Запускаем Apache при старте контейнера
+CMD apachectl -D FOREGROUND
