@@ -1,0 +1,76 @@
+version: '3'
+
+services:
+  moiseevgd-netology-db:
+    image: postgres
+    container_name: moiseevgd-netology-db
+    ports:
+      - 5432:5432
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data/pgdata
+    environment:
+      POSTGRES_DB: moiseevgd-db
+      POSTGRES_PASSWORD: moiseevgd12!3!!
+      PGDATA: /var/lib/postgresql/data/pgdata
+    networks:
+      moiseevgd-my-netology-hw:
+        ipv4_address: 172.22.0.2
+    restart: always
+
+  moiseevgd-pgadmin:
+    image: dpage/pgadmin4
+    links:
+      - moiseevgd-netology-db
+    container_name: moiseevgd-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: moiseevgd@ilove-netology.com
+      PGADMIN_DEFAULT_PASSWORD: 1234
+    ports:
+      - 61231:80
+    networks:
+      moiseevgd-my-netology-hw:
+        ipv4_address: 172.22.0.3
+    restart: always
+
+  moiseevgd-zabbix-netology:
+    image: zabbix/zabbix-server-pgsql
+    links:
+      - moiseevgd-netology-db
+    container_name: moiseevgd-zabbix-netology
+    environment:
+      DB_SERVER_HOST: 172.22.0.2
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: moiseevgd12!3!!
+    ports:
+      - 10051:10051
+    networks:
+      moiseevgd-my-netology-hw:
+        ipv4_address: 172.22.0.4
+    restart: always
+    
+  moiseevgd-netology-zabbix-frontend:
+    image: zabbix/zabbix-web-apache-pgsql
+    links:
+      - moiseevgd-netology-db
+      - moiseevgd-zabbix-netology
+    container_name: moiseevgd-netology-zabbix-frontend
+    environment:
+      DB_SERVER_HOST: 172.22.0.2
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: moiseevgd12!3!!
+      ZBX_SERVER_HOST: 172.22.0.4
+      PHP_TZ: "Europe/Moscow"
+    ports:
+      - 80:8080
+      - 443:8443
+    networks:
+      moiseevgd-my-netology-hw:
+        ipv4_address: 172.22.0.5
+    restart: always
+
+networks:
+  moiseevgd-my-netology-hw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.22.0.0/24
