@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   moiseevgd-netology-db:
@@ -47,7 +47,7 @@ services:
       moiseevgd-my-netology-hw:
         ipv4_address: 172.22.0.4
     restart: always
-    
+
   moiseevgd-netology-zabbix-frontend:
     image: zabbix/zabbix-web-apache-pgsql
     links:
