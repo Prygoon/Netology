@@ -1,7 +1,7 @@
 ---
 - hosts: all
   vars:
-    user: moiseev
+    user: prygoon
     # created with:
     # python -c 'import crypt; print(crypt.crypt("<password>", "$1$tjerugy9$"))'
     password: $1$tjerugy9$5O391mjzV0GXpgVpIUECF1
@@ -22,10 +22,9 @@
         update_cache: true
       with_items:
         - htop
-        - sysstat
-        - atop
+        - net-tools
+        - vim
         - nano
-        - neofetch
       when:
         - ansible_os_family == "Debian"
     - name: Update all packages in RPM-based machines
@@ -49,8 +48,8 @@
         update_cache: true
       with_items:
         - htop
-        - sysstat
-        - atop
+        - net-tools
+        - vim
         - nano
       when:
         - ansible_os_family == "RedHat"
