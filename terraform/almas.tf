@@ -7,27 +7,37 @@ terraform {
   required_version = ">= 0.13"
 }
 
-variable "YANDEX_CLOUD_API_TOKEN" {
+variable "yandex_cloud_api_token" {
   description = "Yandex Cloud API Token"
+  type        = string
 }
 
 provider "yandex" {
-  token     = var.YANDEX_CLOUD_API_TOKEN
+  token     = var.yandex_cloud_api_token
+  cloud_id  = "b1g0kbqchihj27eqghpe"
   folder_id = "b1gj3ksb70peir427jks"
-  zone      = "ru-central1-a"
+  zone      = "ru-central1-b"
 }
 
 resource "yandex_compute_instance" "vm-1" {
-  name = "alma1"
+  name        = "alma1"
+  platform_id = "standard-v2"
+  # service_account_id = "YCAJEc07CSCW5ssjlde41ORKy"
+
+  scheduling_policy {
+    preemptible = true
+  }
 
   resources {
-    cores  = 2
-    memory = 2
+    core_fraction = 5
+    cores         = 2
+    memory        = 2
   }
 
   boot_disk {
     initialize_params {
       image_id = "fd81m6n1rh1v2mpjft86"
+      size     = 10
     }
   }
 
@@ -37,22 +47,30 @@ resource "yandex_compute_instance" "vm-1" {
   }
 
   metadata = {
-    ssh-keys = "${file("~/.ssh/id_rsa.pub")}"
+    user-data = "${file("./meta.yaml")}"
   }
 
 }
 
 resource "yandex_compute_instance" "vm-2" {
-  name = "alma2"
+  name        = "alma2"
+  platform_id = "standard-v2"
+  # service_account_id = "YCAJEc07CSCW5ssjlde41ORKy"
+
+  scheduling_policy {
+    preemptible = true
+  }
 
   resources {
-    cores  = 2
-    memory = 2
+    core_fraction = 5
+    cores         = 2
+    memory        = 2
   }
 
   boot_disk {
     initialize_params {
       image_id = "fd81m6n1rh1v2mpjft86"
+      size     = 10
     }
   }
 
@@ -62,7 +80,7 @@ resource "yandex_compute_instance" "vm-2" {
   }
 
   metadata = {
-    ssh-keys = "${file("~/.ssh/id_rsa.pub")}"
+    user-data = "${file("./meta.yaml")}"
   }
 
 }
@@ -73,7 +91,7 @@ resource "yandex_vpc_network" "network-1" {
 
 resource "yandex_vpc_subnet" "subnet-1" {
   name           = "subnet1"
-  zone           = "ru-central1-a"
+  zone           = "ru-central1-b"
   network_id     = yandex_vpc_network.network-1.id
   v4_cidr_blocks = ["192.168.10.0/24"]
 }
