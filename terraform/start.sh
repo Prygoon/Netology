@@ -1,15 +1,15 @@
 #!/bin/bash
 
-# Run Terraform apply and check the exit code
+# Запускаем terraform apply и проверяем exit code
 if ! terraform apply; then
     echo "Terraform apply failed. Script execution stopped."
     exit 1
 fi
 
-# Read the username from meta.yaml
+# Читаем username из meta.yaml
 username=$(grep -oP '(?<=name: )\S+' meta.yaml)
 
-# Run Terraform output and save the output to an array
+# Запускаем terraform output и сохраняем вывод в массив
 mapfile -t ip_addresses < <(terraform output -json | jq -r '.external_ip_address_vm_1.value, .external_ip_address_vm_2.value')
 
 
