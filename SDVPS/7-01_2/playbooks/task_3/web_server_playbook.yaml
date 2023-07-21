@@ -1,0 +1,23 @@
+- name: Setup Web Server
+  hosts: yandex_cloud
+  become: true
+
+  roles:
+    - web_server
+
+- name: Check website availability
+  hosts: yandex_cloud
+  gather_facts: no
+
+  tasks:
+  - name: Check website status
+    uri:
+      url: "http://{{ ansible_host }}"
+      return_content: yes
+    register: website_response
+    tags: check_website
+
+  - name: Display website status
+    debug:
+      msg: "Website on {{ ansible_host }} is {{ website_response.status }}"
+    tags: check_website

@@ -1,0 +1,13 @@
+- name: Change MOTD (Message of the Day)
+  hosts: yandex_cloud
+
+  become: true
+  become_user: root
+
+  vars:
+    custom_message: "Hello Netology!"
+  tasks:
+    - name: Set custom MOTD
+      template:
+        src: templates/motd.j2
+        dest: /etc/motd

@@ -1,0 +1,33 @@
+- name: Download and Extract Apache Kafka
+  hosts: yandex_cloud
+  
+  vars_files:
+  - ../../../terraform/meta.yaml
+
+  become: true
+  become_user: root
+
+  tasks:
+    - name: Create Kafka directory
+      file:
+        path: /opt/kafka
+        state: directory
+
+    - name: Download Kafka archive
+      get_url:
+        url: "https://downloads.apache.org/kafka/3.5.0/kafka_2.13-3.5.0.tgz"
+        dest: /tmp/kafka_2.13-3.5.0.tgz
+
+    - name: Extract Kafka archive
+      unarchive:
+        src: /tmp/kafka_2.13-3.5.0.tgz
+        dest: /opt/kafka
+        remote_src: yes
+
+    - name: Set permissions for Kafka directory
+      file:
+        path: /opt/kafka
+        state: directory
+        owner: "{{ users[0].name }}"
+        group: "{{ users[0].name }}"
+        recurse: yes

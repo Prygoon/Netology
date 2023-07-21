@@ -1,0 +1,59 @@
+# tasks file for web_server
+
+- name: Install Apache on Debian/Ubuntu
+  package:
+    name: apache2
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: Install Apache on Red Hat/CentOS
+  package:
+    name: httpd
+    state: present
+  when: ansible_os_family == 'RedHat'
+
+- name: Copy custom index.html template
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+  notify: Restart Apache
+
+- name: Install ufw on Debian/Ubuntu
+  package:
+    name: ufw
+    state: present
+  when: ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu'
+
+- name: Install firewalld on Red Hat/CentOS
+  package:
+    name: firewalld
+    state: present
+  when: ansible_os_family == 'RedHat'
+
+- name: Open port 80 on Deb distros
+  ufw:
+    rule: allow
+    port: 80
+    state: enabled
+  when: ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu'
+
+- name: Open port 80 on RPM distros
+  firewalld:
+    service: http
+    permanent: yes
+    state: enabled
+  when: ansible_os_family == 'RedHat'
+
+- name: Start Apache service on DEB distros and enable on boot
+  service:
+    name: apache2
+    state: started
+    enabled: yes
+  when: ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu'
+
+- name: Start Apache service on RPM distros and enable on boot
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+  when: ansible_os_family == 'RedHat'

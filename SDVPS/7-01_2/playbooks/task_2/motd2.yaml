@@ -1,0 +1,15 @@
+- name: Change MOTD (Message of the Day)
+  hosts: yandex_cloud
+  gather_facts: yes
+
+  become: true
+  become_user: root
+
+  vars:
+    custom_message: "Have a great day, sysadmin!"
+
+  tasks:
+    - name: Set custom MOTD
+      template:
+        src: templates/motd2.j2
+        dest: /etc/motd

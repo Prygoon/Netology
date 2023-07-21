@@ -1,0 +1,17 @@
+- name: Install and configure tuned
+  hosts: yandex_cloud
+
+  become: true
+  become_user: root
+
+  tasks:
+    - name: Install tuned package
+      package:
+        name: tuned
+        state: present
+
+    - name: Start tuned service
+      service:
+        name: tuned
+        state: started
+        enabled: yes

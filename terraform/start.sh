@@ -24,11 +24,16 @@ if ! grep -qF "[$group_name]" "$inventory_file"; then
     echo -e "\n[$group_name]" >> "$inventory_file"
 fi
 
+base_hostname="host"
+index=1
+
 # Добавляем IP-адреса в файл инвентаря Ansible в указанную группу
 for ip_address in "${ip_addresses[@]}"; do
+    hostname="${base_hostname}${index}"
     # Проверяем, не содержится ли уже IP-адрес в файле
     if ! grep -qF "$ip_address" "$inventory_file"; then
         # Добавляем IP-адрес в файл и группу
-        echo "$ip_address ansible_connection=ssh ansible_user=$username" >> "$inventory_file"
+        echo "$hostname ansible_host=$ip_address ansible_connection=ssh ansible_user=$username" >> "$inventory_file"
     fi
+    ((index++))
 done
