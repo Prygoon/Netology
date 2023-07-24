@@ -1,0 +1,4 @@
+Welcome to {{ hostvars[inventory_hostname].ansible_hostname }} ({{ hostvars[inventory_hostname].ansible_host }})!
+{% if custom_message %}
+{{ custom_message }}
+{% endif %}

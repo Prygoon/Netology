@@ -1,0 +1,14 @@
+---
+# handlers file for web_server
+
+- name: Restart Apache on Debian/Ubuntu
+  service:
+    name: apache2
+    state: restarted
+  when: ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu'
+
+- name: Restart Apache on RedHat/CentOS
+  service:
+    name: httpd
+    state: restarted
+  when: ansible_os_family == 'RedHat'
