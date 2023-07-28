@@ -1,0 +1,29 @@
+---
+- name: Install PostgreSQL on the second machine
+  hosts: host2
+  become: yes
+
+  vars:
+    postgresql_data_dir: /var/lib/pgsql/data
+
+  tasks:
+    - name: Install PostgreSQL package
+      package:
+        name: postgresql-server
+        state: present
+
+    - name: Check if PostgreSQL data directory exists (For rpm-based systems)
+      stat:
+        path: "{{ postgresql_data_dir }}/PG_VERSION"
+      register: postgres_version_stat
+      when: ansible_os_family == 'RedHat'
+
+    - name: Initialize PostgreSQL database (For rpm-based systems)
+      command: "/usr/bin/postgresql-setup --initdb"
+      when: ansible_os_family == 'RedHat' and not postgres_version_stat.stat.exists
+
+    - name: Start and enable PostgreSQL service
+      service:
+        name: postgresql
+        state: started
+        enabled: yes

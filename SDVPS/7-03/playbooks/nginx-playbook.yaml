@@ -1,0 +1,53 @@
+---
+- name: Install Nginx
+  hosts: host1
+  become: yes
+  become_method: sudo
+  remote_user: user
+
+  vars_files:
+    - vars.yaml
+
+  tasks:
+    - name: Install Nginx package
+      package:
+        name: nginx
+        state: present
+
+    - name: Copy nginx configuration file
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+        owner: root
+        group: root
+        mode: 0644
+      notify:
+        - Restart Nginx
+
+    - name: Create web root directory
+      file:
+        path: "{{ web_root }}"
+        state: directory
+        owner: root
+        group: root
+        mode: 0755
+
+    - name: Copy web resource
+      template:
+        src: index.html.j2
+        dest: "{{ web_root }}/index.html"
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Start Nginx service
+      service:
+        name: nginx
+        state: started
+
+  
+  handlers:
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted

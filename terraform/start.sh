@@ -1,23 +1,28 @@
 #!/bin/bash
 
-# Запускаем terraform apply и проверяем exit code
-if ! terraform apply; then
-    echo "Terraform apply failed. Script execution stopped."
-    exit 1
-fi
-
-# Читаем username из meta.yaml
-username=$(grep -oP '(?<=name: )\S+' meta.yaml)
-
-# Запускаем terraform output и сохраняем вывод в массив
-mapfile -t ip_addresses < <(terraform output -json | jq -r '.external_ip_address_vm_1.value, .external_ip_address_vm_2.value')
-
-
 # Файл инвентаря Ansible
 inventory_file="inventory.ini"
 
 # Группа в файле инвентаря
 group_name="yandex_cloud"
+
+# Читаем username из meta.yaml
+username=$(grep -oP '(?<=name: )\S+' meta.yaml)
+
+# Проверяем существует ли inventory file и удаляем старый
+if [ -f "$inventory_file" ]; then
+    rm "$inventory_file"
+    echo "Old inventory file $inventory_file removed."
+fi
+
+# Запускаем terraform apply и проверяем exit code
+if ! terraform apply -auto-approve; then
+    echo "Terraform apply failed. Script execution stopped."
+    exit 1
+fi
+
+# Запускаем terraform output и сохраняем внешние IP в массив
+mapfile -t ip_addresses < <(terraform output -json | jq -r '.external_ip_addresses.value[]')
 
 # Добавляем группу в файл инвентаря, если она еще не существует
 if ! grep -qF "[$group_name]" "$inventory_file"; then

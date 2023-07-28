@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Run Terraform destroy and check the exit code
-if ! terraform destroy; then
+if ! terraform destroy -auto-approve; then
     echo "Terraform destroy failed. Script execution stopped."
     exit 1
 fi
