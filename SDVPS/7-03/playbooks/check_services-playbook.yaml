@@ -1,0 +1,27 @@
+---
+- name: Check status of PostgreSQL and Nginx services
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Check Nginx service status
+      systemd:
+        name: nginx
+      register: nginx_status
+      when: inventory_hostname == "host1"
+
+    - name: Check PostgreSQL service status
+      service:
+        name: postgresql
+      register: postgresql_status
+      when: inventory_hostname == "host2"
+
+    - name: Display Nginx service status
+      debug:
+        var: nginx_status.status.ActiveState
+      when: inventory_hostname == "host1"
+
+    - name: Display PostgreSQL service status
+      debug:
+        var: postgresql_status.status.ActiveState
+      when: inventory_hostname == "host2"
